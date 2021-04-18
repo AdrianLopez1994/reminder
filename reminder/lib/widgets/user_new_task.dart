@@ -1,21 +1,38 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:reminder/models/enums/period.dart';
+import 'package:reminder/models/task.dart';
 
 class UserNewTask extends StatefulWidget {
-  const UserNewTask({Key key}) : super(key: key);
+  final Function addNewReminderCallback;
+  //const UserNewTask({Key key}) : super(key: key);
+
+  UserNewTask(this.addNewReminderCallback);
 
   @override
-  _UserNewTaskState createState() => _UserNewTaskState();
+  _UserNewTaskState createState() => _UserNewTaskState(addNewReminderCallback);
 }
 
 class _UserNewTaskState extends State<UserNewTask> {
-  String currentReminderDateSelected = "Pick a date";
+  final Function addNewReminderCallback;
+  final titleController = TextEditingController();
   final DateFormat dateFormatter = new DateFormat('dd-MM-yyyy hh:mm');
   final List<String> availablePeriods = ["Year", "Month", "Day"];
+
+  String currentReminderDateSelected = "Pick a date";
   DateTime dateTimeSelected = DateTime.now();
   String selectedPeriod;
   String selectedPeriodValue = '1';
+
+  _UserNewTaskState(this.addNewReminderCallback);
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    titleController.dispose();
+    super.dispose();
+  }
 
   Future<void> showDateSelector(BuildContext context) async {
     FocusScope.of(context).unfocus();
@@ -64,6 +81,17 @@ class _UserNewTaskState extends State<UserNewTask> {
     });
   }
 
+  void createNewReminder() {
+    print("Saving data:");
+    print("Title: " + titleController.text);
+    print("Repeat every: " + selectedPeriodValue + " " + selectedPeriod);
+    print("Start at: " + currentReminderDateSelected.toString());
+    print("------------");
+
+    this.addNewReminderCallback(
+        new Task(titleController.text, this.dateTimeSelected, Period.DAILY));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -86,6 +114,7 @@ class _UserNewTaskState extends State<UserNewTask> {
                 ),
                 TextField(
                   decoration: InputDecoration(labelText: "Title"),
+                  controller: titleController,
                 ),
                 Container(
                   alignment: Alignment.centerLeft,
@@ -158,7 +187,7 @@ class _UserNewTaskState extends State<UserNewTask> {
                 Container(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => {print("Saving data")},
+                    onPressed: () => {createNewReminder()},
                     child: Text("Save data"),
                     style: ButtonStyle(
                         backgroundColor:

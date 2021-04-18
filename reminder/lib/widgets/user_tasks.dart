@@ -18,20 +18,6 @@ class _UserTasksState extends State<UserTasks> {
     Task("Comprar huevos", DateTime.now(), Period.MONTHLY),
     Task("Pagar garaje", DateTime.now(), Period.YEARLY),
     Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
-    Task("Pagar a Mer", DateTime.now(), Period.DAILY),
   ];
 
   void addReminderToTaskList(Task newTask) {
@@ -72,7 +58,7 @@ class _UserTasksState extends State<UserTasks> {
       body: TaskList(userTasks, this.updateTaskEnableFlag),
 
       builder: (context, state) {
-        return UserNewTask();
+        return UserNewTask(this.addReminderToTaskList);
       },
     );
   }
