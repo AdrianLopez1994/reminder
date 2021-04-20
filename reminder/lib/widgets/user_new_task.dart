@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:reminder/models/enums/period.dart';
 import 'package:reminder/models/task.dart';
+import 'package:local_auth/local_auth.dart';
 
 class UserNewTask extends StatefulWidget {
   final Function addNewReminderCallback;
@@ -15,12 +16,22 @@ class UserNewTask extends StatefulWidget {
 }
 
 class _UserNewTaskState extends State<UserNewTask> {
+  //Callback to add reminder to main reminder list
   final Function addNewReminderCallback;
+
+  //Controller to retrieve title value
   final titleController = TextEditingController();
+
+  //Formatter to show selected date time
   final DateFormat dateFormatter = new DateFormat('dd-MM-yyyy hh:mm');
+
+  //Available periods to choose (TODO - this must be a enum)
   final List<String> availablePeriods = ["Year", "Month", "Day"];
 
+  //Default selected date message
   String currentReminderDateSelected = "Pick a date";
+
+  //Variables to store user selected info
   DateTime dateTimeSelected = DateTime.now();
   String selectedPeriod;
   String selectedPeriodValue = '1';
@@ -34,6 +45,7 @@ class _UserNewTaskState extends State<UserNewTask> {
     super.dispose();
   }
 
+  //Show date selector modal
   Future<void> showDateSelector(BuildContext context) async {
     FocusScope.of(context).unfocus();
     final DateTime date = await showDatePicker(
@@ -52,6 +64,7 @@ class _UserNewTaskState extends State<UserNewTask> {
       });
   }
 
+  //Show time selector modal
   Future<void> showTimeSelector(BuildContext context) async {
     FocusScope.of(context).unfocus();
     final TimeOfDay time =
@@ -69,25 +82,34 @@ class _UserNewTaskState extends State<UserNewTask> {
       });
   }
 
+  //Callback to save selected period
   void pickPeriodUnit(String period) {
     setState(() {
       selectedPeriod = period;
     });
   }
 
+  //Callback to save period unit
   void pickPeriodValue(String period) {
     setState(() {
       selectedPeriodValue = period;
     });
   }
 
-  void createNewReminder() {
+  //Callback function to retrieve user input data
+  void createNewReminder() async {
     print("Saving data:");
     print("Title: " + titleController.text);
     print("Repeat every: " + selectedPeriodValue + " " + selectedPeriod);
     print("Start at: " + currentReminderDateSelected.toString());
     print("------------");
 
+    var localAuth = LocalAuthentication();
+    bool didAuthenticate = await localAuth.authenticate(
+        localizedReason: 'Please authenticate to show account balance',
+        biometricOnly: true);
+
+    print("Can authenticate: " + didAuthenticate.toString());
     this.addNewReminderCallback(
         new Task(titleController.text, this.dateTimeSelected, Period.DAILY));
   }
